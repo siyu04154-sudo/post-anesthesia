@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>麻醉後不適｜衛生福利部彰化醫院麻醉科</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F8F6F2;
+  --surface:#FFFFFF;
+  --border:#E0DBD0;
+  --ink:#1A1917;
+  --ink-2:#6B6860;
+  --ink-3:#A8A49C;
+
+  /* symptom colors */
+  --pain:      #C04A1A; --pain-l:#FDF0EA;
+  --nausea:    #7A8C1A; --nausea-l:#F5F7EA;
+  --throat:    #1A6C8C; --throat-l:#EAF5F8;
+  --dizzy:     #6C4A8C; --dizzy-l:#F3EFF8;
+  --cold:      #1A648C; --cold-l:#EAF4F8;
+  --thirst:    #8C6A1A; --thirst-l:#F8F3EA;
+
+  /* severity */
+  --ok:#2A6C3A;
+  --warn:#8C5C00;
+  --urgent:#8B2525;
+
+  --r:14px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+}
+
+/* ─── Header ─── */
+.site-header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:14px 20px;
+  display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,0.05);
+}
+.header-label{
+  font-size:11px;letter-spacing:.12em;
+  color:var(--pain);font-family:'Noto Sans TC',sans-serif;
+  font-weight:500;flex:1;
+}
+.header-label strong{font-size:15px;display:block;letter-spacing:0;color:var(--ink);margin-top:1px}
+.theme-pill{
+  font-size:11px;padding:4px 12px;border-radius:99px;
+  background:var(--pain-l);color:var(--pain);
+  border:1px solid rgba(192,74,26,.2);font-weight:500;
+}
+
+/* ─── Container ─── */
+.container{max-width:680px;margin:0 auto;padding:24px 16px 72px}
+
+/* ─── Hero ─── */
+.hero{
+  background:linear-gradient(135deg, #1A1917 60%, #3A2010 100%);
+  border-radius:18px;
+  padding:26px 26px 22px;
+  margin-bottom:24px;
+  color:#fff;
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;
+  right:-30px;top:-30px;
+  width:180px;height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(192,74,26,.3), transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-size:11px;letter-spacing:.12em;
+  color:rgba(255,200,150,.7);font-weight:500;
+  margin-bottom:10px;
+}
+.hero-title{
+  font-family:'Instrument Serif',serif;
+  font-size:26px;line-height:1.25;
+  color:#fff;margin-bottom:12px;
+}
+.hero-title em{font-style:italic;color:#FFCC88}
+.hero-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.8}
+.hero-hint{
+  margin-top:16px;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:rgba(255,255,255,.5);
+}
+.hero-hint svg{width:12px;height:12px;stroke:rgba(255,200,150,.6);fill:none;stroke-width:2}
+
+/* ─── Instruction ─── */
+.instruction{
+  display:flex;align-items:center;gap:10px;
+  font-size:12.5px;color:var(--ink-2);
+  margin-bottom:16px;padding:10px 14px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;
+}
+.instruction svg{width:14px;height:14px;stroke:var(--pain);fill:none;stroke-width:2;flex-shrink:0}
+
+/* ─── Symptom Grid ─── */
+.symptom-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:24px;
+}
+.sym-btn{
+  display:flex;flex-direction:column;align-items:center;
+  padding:14px 8px 12px;
+  background:var(--surface);
+  border:2px solid transparent;
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:all .2s;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.sym-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.sym-btn.active{transform:translateY(-2px)}
+.sym-emoji{font-size:22px;margin-bottom:6px;line-height:1}
+.sym-label{font-size:11.5px;font-weight:600;text-align:center;line-height:1.3}
+
+/* ─── Detail Panel ─── */
+.detail-panel{
+  display:none;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  margin-bottom:24px;
+  animation:slideIn .25s ease;
+}
+.detail-panel.show{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+}
+.detail-emoji-big{font-size:32px}
+.detail-title{font-size:17px;font-weight:700;color:var(--ink)}
+.detail-subtitle{font-size:12px;color:var(--ink-2);margin-top:2px}
+.detail-close{
+  margin-left:auto;
+  width:24px;height:24px;
+  border-radius:50%;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:1px solid var(--border);
+}
+.detail-close svg{width:12px;height:12px;stroke:var(--ink-2);fill:none;stroke-width:2.5;stroke-linecap:round}
+
+.detail-body{padding:18px 20px}
+.detail-desc{font-size:13.5px;color:var(--ink-2);line-height:1.85;margin-bottom:16px}
+
+.response-section{margin-bottom:16px}
+.response-title{
+  font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ok);
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.response-title.warn-title{color:var(--warn)}
+.response-title.urgent-title{color:var(--urgent)}
+.response-title svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.response-list{display:flex;flex-direction:column;gap:6px}
+.response-item{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:13px;line-height:1.6;
+}
+.resp-icon{
+  width:18px;height:18px;min-width:18px;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;
+}
+.resp-ok{background:rgba(42,108,58,.12);color:var(--ok)}
+.resp-warn{background:rgba(140,92,0,.12);color:var(--warn)}
+.resp-urgent{background:rgba(139,37,37,.12);color:var(--urgent)}
+.resp-text-ok{color:#2A4A32}
+.resp-text-warn{color:#5A3C00}
+.resp-text-urgent{color:#5A1414}
+
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+/* ─── Urgent Banner ─── */
+.urgent-banner{
+  background:#FDF0F0;
+  border:1px solid rgba(139,37,37,.2);
+  border-radius:var(--r);
+  padding:18px 20px;
+  margin-bottom:20px;
+}
+.urgent-banner-title{
+  font-size:13.5px;font-weight:700;color:var(--urgent);
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:10px;
+}
+.urgent-banner-title svg{width:16px;height:16px;stroke:var(--urgent);fill:none;stroke-width:2}
+.urgent-items{display:flex;flex-direction:column;gap:5px}
+.urgent-item{
+  font-size:12.5px;color:#6A1A1A;line-height:1.5;
+  display:flex;align-items:baseline;gap:6px;
+}
+.urgent-item::before{content:'▸';color:var(--urgent);font-size:10px}
+
+/* ─── Reminder ─── */
+.reminder{
+  font-size:12.5px;color:var(--ink-2);line-height:1.8;
+  padding:14px 16px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);
+  text-align:center;
+}
+.reminder strong{color:var(--ink);font-weight:600}
+
+/* ─── Footer ─── */
+.site-footer{
+  text-align:center;padding:20px 16px;
+  font-size:11px;color:var(--ink-3);
+  border-top:1px solid var(--border);line-height:1.8;
+}
+
+@media(max-width:480px){
+  .symptom-grid{grid-template-columns:repeat(3,1fr);gap:7px}
+  .sym-btn{padding:12px 4px 10px}
+  .sym-emoji{font-size:20px}
+  .sym-label{font-size:10.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-label">
+    THEME 04 · 麻醉衛教
+    <strong>麻醉後不適</strong>
+  </div>
+  <span class="theme-pill">術後照護</span>
+</header>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">POSTOPERATIVE DISCOMFORT GUIDE</div>
+    <div class="hero-title">術後的<em>不舒服</em><br>都是可以處理的</div>
+    <div class="hero-desc">麻醉藥、手術刺激與躺著不動，可能帶來各種短暫不適。多數情況都是正常的術後反應，醫護人員有方法幫您減輕。點選下方您出現的症狀，了解如何處理與何時需要警覺。</div>
+    <div class="hero-hint">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      點選症狀圖示查看對應處理方式
+    </div>
+  </div>
+
+  <!-- Instruction -->
+  <div class="instruction">
+    <svg viewBox="0 0 24 24"><path d="M15 15l-2 5L9 9l11 4-5 2z"/></svg>
+    請點選下方您感到不舒服的症狀，即可查看建議處理方式及需要立刻告知醫護的情況
+  </div>
+
+  <!-- Symptom Grid -->
+  <div class="symptom-grid">
+    <div class="sym-btn" id="btn-pain" onclick="showSymptom('pain')" style="--ac:var(--pain)">
+      <span class="sym-emoji">🤕</span>
+      <span class="sym-label" style="color:var(--pain)">傷口疼痛</span>
+    </div>
+    <div class="sym-btn" id="btn-nausea" onclick="showSymptom('nausea')">
+      <span class="sym-emoji">🤢</span>
+      <span class="sym-label" style="color:var(--nausea)">噁心嘔吐</span>
+    </div>
+    <div class="sym-btn" id="btn-cold" onclick="showSymptom('cold')">
+      <span class="sym-emoji">🥶</span>
+      <span class="sym-label" style="color:var(--cold)">發冷寒顫</span>
+    </div>
+    <div class="sym-btn" id="btn-throat" onclick="showSymptom('throat')">
+      <span class="sym-emoji">😮‍💨</span>
+      <span class="sym-label" style="color:var(--throat)">喉嚨不適</span>
+    </div>
+    <div class="sym-btn" id="btn-dizzy" onclick="showSymptom('dizzy')">
+      <span class="sym-emoji">😵</span>
+      <span class="sym-label" style="color:var(--dizzy)">頭暈無力</span>
+    </div>
+    <div class="sym-btn" id="btn-thirst" onclick="showSymptom('thirst')">
+      <span class="sym-emoji">💧</span>
+      <span class="sym-label" style="color:var(--thirst)">口乾口渴</span>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-header" id="detail-header">
+      <span class="detail-emoji-big" id="detail-emoji"></span>
+      <div>
+        <div class="detail-title" id="detail-title"></div>
+        <div class="detail-subtitle" id="detail-subtitle"></div>
+      </div>
+      <div class="detail-close" onclick="closeDetail()">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-desc" id="detail-desc"></div>
+      <div class="response-section">
+        <div class="response-title">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          您可以這樣做
+        </div>
+        <div class="response-list" id="detail-ok"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reminder -->
+  <div class="reminder">
+    <strong>任何不確定都可以開口問，越早說越安全。</strong><br>
+    依醫護指示做深呼吸、咳嗽與早期活動，有助於加速恢復。
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  衛生福利部彰化醫院 麻醉科｜本衛教資料僅供參考，實際醫療指示請依醫護人員說明為準<br>
+  如有任何疑問，請於門診或住院時洽詢麻醉科醫護人員
+</footer>
+
+<script>
+const DATA = {
+  pain:{
+    emoji:'🤕',title:'傷口疼痛・酸痛',
+    subtitle:'術後最常見的不適，是正常現象',
+    color:'var(--pain)',lightColor:'var(--pain-l)',
+    desc:'手術後傷口疼痛是正常的生理反應，但您不需要硬撐。良好的疼痛控制不只讓您舒適，也有助於提早下床活動、加速恢復、減少肺部與血栓併發症。',
+    ok:['依護理師指示使用止痛藥或自控式止痛機（PCA）；疼痛是有藥可用的','翻身、咳嗽前先深呼吸，必要時可先告知護理師協助','依醫囑做深呼吸、腿部運動，幫助循環',
+        '【自費選項】舒疼消熱 Acetamol（360元/2劑）：速效靜脈止痛，持續約4小時，無腸胃出血副作用',
+        '【自費選項】得術泰 Dynastat（700元）：長效消炎止痛6–12小時，腸胃出血風險低',
+        '【自費選項】神經阻斷術 Nerve Block（3,000元）：超音波導引局部止痛，效果可達12小時以上',
+        '【自費選項】病人自控式止痛 PCA（6,000元/3天）：感覺痛即可按鈕給藥，即時緩解、副作用少'],
+    urgent:['疼痛持續加重，止痛後仍無法忍受','傷口突然劇烈疼痛或明顯腫脹、滲血']
+  },
+  nausea:{
+    emoji:'🤢',title:'噁心・嘔吐',
+    subtitle:'麻醉後約 20–40% 的人會出現',
+    color:'var(--nausea)',lightColor:'var(--nausea-l)',
+    desc:'麻醉藥物（尤其吸入性麻醉劑）、手術類型、個人體質等因素，都可能引起術後噁心嘔吐（PONV）。多數情況下，給予止吐藥後可明顯改善，通常持續時間不長。',
+    ok:['不要急著進食，等護理師說「可以」再從少量清水開始','盡量側躺，避免仰躺時嘔吐物嗆到','深呼吸、放慢呼吸節奏，有助緩解噁心感',
+        '【自費選項】止吐藥 Aloxi（450元）：麻醉結束前靜脈注射，有效改善全身麻醉引起的噁心嘔吐，可向醫護人員詢問'],
+    urgent:['嘔吐完全無法停止，越來越頻繁','吐出咖啡色、暗紅色或鮮血色液體','嘔吐後呼吸喘、咳不停或胸悶']
+  },
+  cold:{
+    emoji:'🥶',title:'發冷・寒顫',
+    subtitle:'麻醉後體溫下降的常見反應',
+    color:'var(--cold)',lightColor:'var(--cold-l)',
+    desc:'手術室溫度低、麻醉藥物影響體溫調節中樞、以及大量輸液，都可能讓體溫在術後下降。適當保暖後多數人會在 30–60 分鐘內緩解。',
+    ok:['請護理師提供毯子或電熱毯幫助保暖','主動告訴護理師您很冷，不需要忍耐','若寒顫很嚴重而不舒服，護理師可以給藥緩解',
+        '【自費選項】拋棄式溫毯被套（1,000元）：手術全程使用熱空氣保暖，維持體溫恆溫，有效降低術中低體溫與寒顫發生，可於術前向醫護人員詢問'],
+    urgent:['持續發冷且同時出現發燒（體溫升高）、心跳加速','寒顫合併胸悶、喘不過氣','長時間（超過 2 小時）持續不改善']
+  },
+  throat:{
+    emoji:'😮‍💨',title:'喉嚨痛・聲音沙啞',
+    subtitle:'插管手術後的暫時性不適',
+    color:'var(--throat)',lightColor:'var(--throat-l)',
+    desc:'進行全身麻醉需要在氣管放置呼吸管路，管路摩擦氣管壁可能造成輕微發炎。多數情況下，喉嚨痛與聲音沙啞在 1–2 天內會自然改善。',
+    ok:['醫護人員允許後，先小口喝溫水潤喉','可含冰塊（若醫護允許）緩解疼痛與腫脹感','說話不需要刻意壓低聲量，自然說即可','休息是最好的恢復方式'],
+    urgent:['喉嚨越來越腫、吞嚥極度困難','呼吸費力、喘鳴聲變大（可能是氣道腫脹）','說話完全失聲且持續超過 2–3 天']
+  },
+  dizzy:{
+    emoji:'😵',title:'頭暈・想睡・無力',
+    subtitle:'麻醉藥代謝需要時間，正常現象',
+    color:'var(--dizzy)',lightColor:'var(--dizzy-l)',
+    desc:'麻醉藥物在體內代謝需要時間，術後初期感到迷糊、頭暈或無力是非常正常的。通常隨著時間推移會逐漸好轉，請不要急著下床。',
+    ok:['先躺好充分休息，不要強迫自己保持清醒','想起身時，先在床上坐起，停留幾分鐘再站立（避免姿勢性低血壓）','下床務必請護理師或家屬協助，避免跌倒','攝取足夠水分（醫護許可後）有助藥物代謝'],
+    urgent:['起身時出現昏厥或快要跌倒','意識不清、叫不太醒（家屬請立刻通知護理師）','突然出現手腳無力或說話不清楚（排除中風可能）']
+  },
+  thirst:{
+    emoji:'💧',title:'口乾・口渴',
+    subtitle:'禁食禁水後常見，術後逐漸緩解',
+    color:'var(--thirst)',lightColor:'var(--thirst-l)',
+    desc:'手術前的禁食禁水加上術中可能的大量輸液，常讓患者術後感到口乾。點滴會補充基本水分需求，等腸胃功能恢復後即可開始飲水。',
+    ok:['可先用棉棒沾水潤口，或請護理師協助漱口','待醫護人員允許後，先從少量溫水（幾口）開始','少量多次比一口氣大量飲水更安全','不要因口渴就自行要求進食，應等護理師評估腸胃功能'],
+    urgent:['口渴非常嚴重且合併頭暈、心悸（可能脫水）','嘴唇嚴重乾裂出血且無法進水']
+  }
+};
+
+let current = null;
+
+function showSymptom(key){
+  if(current === key){ closeDetail(); return; }
+  current = key;
+  const d = DATA[key];
+
+  // Update buttons
+  document.querySelectorAll('.sym-btn').forEach(b=>{
+    b.style.borderColor = 'transparent';
+    b.style.background = '#fff';
+    b.classList.remove('active');
+  });
+  const btn = document.getElementById('btn-'+key);
+  btn.style.borderColor = d.color;
+  btn.style.background = d.lightColor;
+  btn.classList.add('active');
+
+  // Update panel
+  document.getElementById('detail-emoji').textContent = d.emoji;
+  document.getElementById('detail-title').textContent = d.title;
+  document.getElementById('detail-subtitle').textContent = d.subtitle;
+  document.getElementById('detail-header').style.borderBottom = '2px solid '+d.color;
+  document.getElementById('detail-desc').textContent = d.desc;
+
+  const okEl = document.getElementById('detail-ok');
+  okEl.innerHTML = d.ok.map(t => {
+    const isSelfpay = t.startsWith('【自費選項】');
+    const text = isSelfpay ? t.replace('【自費選項】', '') : t;
+    if(isSelfpay) return `
+      <div class="response-item" style="background:rgba(184,149,42,0.07);border:1px solid rgba(184,149,42,0.25);border-radius:8px;padding:8px 10px;margin-top:4px">
+        <div class="resp-icon" style="background:rgba(184,149,42,0.15);color:#7A5C10;font-size:10px;font-weight:700;border-radius:4px;min-width:36px;width:36px;height:18px;padding:0 4px">自費</div>
+        <span style="color:#5C4010;font-size:12.5px;line-height:1.6">${text}</span>
+      </div>`;
+    return `
+      <div class="response-item">
+        <div class="resp-icon resp-ok">✓</div>
+        <span class="resp-text-ok">${text}</span>
+      </div>`;
+  }).join('');
+
+  const panel = document.getElementById('detail-panel');
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeDetail(){
+  current = null;
+  document.querySelectorAll('.sym-btn').forEach(b=>{
+    b.style.borderColor='transparent';
+    b.style.background='#fff';
+    b.classList.remove('active');
+  });
+  document.getElementById('detail-panel').classList.remove('show');
+}
+</script>
+</body>
+</html>
